@@ -25,41 +25,39 @@
                 
                 // Tile selector system
                 this.availableTileTypes = [
-                    // Grass tiles
-                    'grass_center', 'grass_corner', 'grass_edge', 'grass_hill', 'grass_n', 'grass_ne', 'grass_nw', 'grass_s', 'grass_se', 'grass_sw', 'grass_e', 'grass_w',
+                    // Grass & Terrain
+                    'grass_center', 'grass_corner', 'grass_pathBend', 'grass_pathCorner', 'grass_pathCrossing',
+                    'grass_pathEnd', 'grass_pathEndSquare', 'grass_pathSlope', 'grass_pathSplit', 'grass_path',
+                    'grass_slope', 'grass_slopeConcave', 'grass_slopeConvex', 'grass_waterConcave', 'grass_waterConvex',
+                    'grass_waterRiver', 'grass_water',
                     
-                    // Building tiles
-                    'building_center', 'building_corner', 'building_edge', 'building_wall', 'building_n', 'building_ne', 'building_nw', 'building_s', 'building_se', 'building_sw', 'building_e', 'building_w',
+                    // Rivers & Bridges
+                    'grass_riverBend', 'grass_riverBridge', 'grass_riverCorner', 'grass_riverCrossing',
+                    'grass_riverEnd', 'grass_riverEndSquare', 'grass_riverSlope', 'grass_riverSplit', 'grass_river',
                     
-                    // Water tiles
-                    'water_center', 'water_corner', 'water_edge', 'water_n', 'water_ne', 'water_nw', 'water_s', 'water_se', 'water_sw', 'water_e', 'water_w',
+                    // Buildings
+                    'building_center', 'building_sides', 'building_dark_center', 'building_dark_center_door',
+                    'building_dark_center_windows', 'building_dark_sides', 'building_dark_sides_door',
+                    'building_dark_sides_windows',
                     
-                    // Road tiles
-                    'road_straight', 'road_corner', 'road_cross', 'road_end', 'road_t', 'road_n', 'road_ne', 'road_nw', 'road_s', 'road_se', 'road_sw', 'road_e', 'road_w',
+                    // Water
+                    'water_center', 'water_fall',
                     
-                    // Wall tiles
-                    'walls_corner', 'walls_straight', 'walls_end', 'walls_gate', 'walls_tower', 'walls_n', 'walls_ne', 'walls_nw', 'walls_s', 'walls_se', 'walls_sw', 'walls_e', 'walls_w',
+                    // Walls
+                    'walls_corner', 'walls_end', 'walls_broken', 'walls_left', 'walls_right',
+                    'walls_sides', 'walls_square',
                     
-                    // Nature objects
-                    'tree', 'tree_big', 'tree_small', 'tree_dead', 'bush', 'flower', 'rock', 'rock_big', 'rock_small', 'mushroom',
+                    // Nature
+                    'tree', 'trees', 'rocks',
                     
                     // Structures
-                    'bridge', 'fence', 'gate', 'tower', 'pillar', 'statue', 'well', 'campfire', 'chest', 'barrel',
+                    'dome', 'dome_small', 'overhang', 'overhang_small', 'structure_tent', 'structure_tentSlant',
                     
-                    // Special terrain
-                    'sand', 'sand_corner', 'sand_edge', 'dirt', 'dirt_corner', 'dirt_edge', 'stone', 'stone_corner', 'stone_edge',
+                    // Floor & Terrain
+                    'dirt_center', 'dirt_low', 'tiles', 'tiles_crumbled', 'tiles_decorated', 'tiles_steps',
                     
-                    // Mountain/Hill tiles
-                    'mountain', 'mountain_peak', 'mountain_slope', 'hill', 'hill_corner', 'hill_edge',
-                    
-                    // Beach/Shore tiles
-                    'beach', 'beach_corner', 'beach_edge', 'shore', 'shore_corner', 'shore_edge',
-                    
-                    // Farm/Agriculture
-                    'farm', 'farm_wheat', 'farm_corn', 'farm_vegetable', 'windmill', 'barn',
-                    
-                    // Urban elements
-                    'pavement', 'pavement_corner', 'pavement_edge', 'lamp', 'bench', 'fountain'
+                    // Stairs
+                    'stairs_full', 'stairs_left', 'stairs_right'
                 ];
                 this.currentHotbarTiles = ['grass_center', 'building_center', 'tree', 'water_center', 'walls_corner'];
                 
@@ -89,7 +87,7 @@
                         
                         tile.style.left = isoX + 'px';
                         tile.style.top = isoY + 'px';
-                        tile.style.zIndex = (row + col) * 100;
+                        tile.style.zIndex = (row + col) + 1;
                         
                         tile.addEventListener('click', (e) => this.placeTile(row, col, e));
                         
@@ -188,7 +186,7 @@
                 
                 tileContainer.style.left = isoX + 'px';
                 tileContainer.style.top = isoY + 'px';
-                tileContainer.style.zIndex = (row + col) * 100 + height + 1;
+                tileContainer.style.zIndex = (row + col) + height + 2;
                 
                 const img = document.createElement('img');
                 img.src = `tiles/${tileData.type}_${tileData.rotation}.png`;
@@ -787,18 +785,37 @@
                 
                 // Define tile categories for better organization
                 const tileCategories = {
-                    'Grass & Terrain': ['grass_center', 'grass_corner', 'grass_edge', 'grass_hill', 'grass_n', 'grass_ne', 'grass_nw', 'grass_s', 'grass_se', 'grass_sw', 'grass_e', 'grass_w'],
-                    'Buildings': ['building_center', 'building_corner', 'building_edge', 'building_wall', 'building_n', 'building_ne', 'building_nw', 'building_s', 'building_se', 'building_sw', 'building_e', 'building_w'],
-                    'Water': ['water_center', 'water_corner', 'water_edge', 'water_n', 'water_ne', 'water_nw', 'water_s', 'water_se', 'water_sw', 'water_e', 'water_w'],
-                    'Roads': ['road_straight', 'road_corner', 'road_cross', 'road_end', 'road_t', 'road_n', 'road_ne', 'road_nw', 'road_s', 'road_se', 'road_sw', 'road_e', 'road_w'],
-                    'Walls': ['walls_corner', 'walls_straight', 'walls_end', 'walls_gate', 'walls_tower', 'walls_n', 'walls_ne', 'walls_nw', 'walls_s', 'walls_se', 'walls_sw', 'walls_e', 'walls_w'],
-                    'Nature': ['tree', 'tree_big', 'tree_small', 'tree_dead', 'bush', 'flower', 'rock', 'rock_big', 'rock_small', 'mushroom'],
-                    'Structures': ['bridge', 'fence', 'gate', 'tower', 'pillar', 'statue', 'well', 'campfire', 'chest', 'barrel'],
-                    'Special Terrain': ['sand', 'sand_corner', 'sand_edge', 'dirt', 'dirt_corner', 'dirt_edge', 'stone', 'stone_corner', 'stone_edge'],
-                    'Mountains': ['mountain', 'mountain_peak', 'mountain_slope', 'hill', 'hill_corner', 'hill_edge'],
-                    'Beach': ['beach', 'beach_corner', 'beach_edge', 'shore', 'shore_corner', 'shore_edge'],
-                    'Agriculture': ['farm', 'farm_wheat', 'farm_corn', 'farm_vegetable', 'windmill', 'barn'],
-                    'Urban': ['pavement', 'pavement_corner', 'pavement_edge', 'lamp', 'bench', 'fountain']
+                    'Grass & Terrain': [
+                        'grass_center', 'grass_corner', 'grass_pathBend', 'grass_pathCorner', 'grass_pathCrossing', 
+                        'grass_pathEnd', 'grass_pathEndSquare', 'grass_pathSlope', 'grass_pathSplit', 'grass_path', 
+                        'grass_slope', 'grass_slopeConcave', 'grass_slopeConvex'
+                    ],
+                    'Buildings': [
+                        'building_center', 'building_sides', 'building_dark_center', 'building_dark_center_door', 
+                        'building_dark_center_windows', 'building_dark_sides', 'building_dark_sides_door', 
+                        'building_dark_sides_windows'
+                    ],
+                    'Water & Rivers': [
+                        'water_center', 'water_fall', 'grass_riverBend', 'grass_riverBridge', 'grass_riverCorner', 
+                        'grass_riverCrossing', 'grass_riverEnd', 'grass_riverEndSquare', 'grass_riverSlope', 
+                        'grass_riverSplit', 'grass_river', 'grass_waterConcave', 'grass_waterConvex', 
+                        'grass_waterRiver', 'grass_water'
+                    ],
+                    'Walls & Fortifications': [
+                        'walls_corner', 'walls_end', 'walls_broken', 'walls_left', 'walls_right', 'walls_sides', 'walls_square'
+                    ],
+                    'Nature': [
+                        'tree', 'trees', 'rocks'
+                    ],
+                    'Structures & Buildings': [
+                        'dome', 'dome_small', 'overhang', 'overhang_small', 'structure_tent', 'structure_tentSlant'
+                    ],
+                    'Floor & Terrain': [
+                        'dirt_center', 'dirt_low', 'tiles', 'tiles_crumbled', 'tiles_decorated', 'tiles_steps'
+                    ],
+                    'Stairs & Elevation': [
+                        'stairs_full', 'stairs_left', 'stairs_right'
+                    ]
                 };
                 
                 // Create tiles organized by category
