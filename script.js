@@ -9,6 +9,11 @@
                 this.currentHeight = 0;
                 this.gridData = {};
                 
+                // Preview system
+                this.previewTile = null;
+                this.lastPreviewRow = null;
+                this.lastPreviewCol = null;
+                
                 // Timer and productivity system
                 this.workTime = 10 * 60; // 10 minutes in seconds
                 this.timeRemaining = this.workTime;
@@ -90,6 +95,8 @@
                         tile.style.zIndex = (row + col) + 1;
                         
                         tile.addEventListener('click', (e) => this.placeTile(row, col, e));
+                        tile.addEventListener('mouseenter', (e) => this.showTilePreview(row, col, e));
+                        tile.addEventListener('mouseleave', (e) => this.hideTilePreview());
                         
                         this.grid.appendChild(tile);
                         this.regenerateTilesAtPosition(row, col);
@@ -254,6 +261,60 @@
                 this.showNotification('Tile removed! +1 tile returned');
             }
             
+            showTilePreview(row, col, event) {
+                // Don't show preview if hovering over UI elements or in remove mode
+                if (event.target.closest('.tile-palette-container') ||
+                    event.target.closest('.notes-panel') ||
+                    event.target.closest('.notification') ||
+                    event.target.closest('.height-controls-card') ||
+                    this.selectedTile === 'remove') {
+                    return;
+                }
+                
+                // Don't show preview if no tiles available (unless replacing)
+                const tileKey = `${row}-${col}`;
+                const isReplacing = this.gridData[tileKey] && this.gridData[tileKey][this.currentHeight] !== undefined;
+                if (!isReplacing && this.tilesAvailable <= 0) {
+                    return;
+                }
+                
+                // Remove existing preview
+                this.hideTilePreview();
+                
+                // Create preview tile
+                this.previewTile = document.createElement('div');
+                this.previewTile.className = 'tile tile-preview';
+                this.previewTile.dataset.row = row;
+                this.previewTile.dataset.col = col;
+                this.previewTile.dataset.height = this.currentHeight;
+                
+                const isoX = (col - row) * (this.tileWidth / 2);
+                const isoY = (col + row) * (this.tileHeight / 2) - (this.currentHeight * this.heightOffset);
+                
+                this.previewTile.style.left = isoX + 'px';
+                this.previewTile.style.top = isoY + 'px';
+                this.previewTile.style.zIndex = (row + col) + this.currentHeight + 50; // Above regular tiles but below UI
+                
+                const img = document.createElement('img');
+                img.src = `tiles/${this.selectedTile}_E.png`;
+                img.alt = this.selectedTile;
+                
+                this.previewTile.appendChild(img);
+                this.grid.appendChild(this.previewTile);
+                
+                this.lastPreviewRow = row;
+                this.lastPreviewCol = col;
+            }
+            
+            hideTilePreview() {
+                if (this.previewTile) {
+                    this.previewTile.remove();
+                    this.previewTile = null;
+                    this.lastPreviewRow = null;
+                    this.lastPreviewCol = null;
+                }
+            }
+            
             setupEventListeners() {
                 // Tile selection
                 document.querySelectorAll('.tile-option').forEach(option => {
@@ -270,6 +331,7 @@
                         document.querySelectorAll('.tile-option').forEach(o => o.classList.remove('selected'));
                         option.classList.add('selected');
                         this.selectedTile = option.dataset.tile;
+                        this.hideTilePreview(); // Hide preview when changing tile selection
                     });
                 });
                 
@@ -491,6 +553,7 @@
                     this.currentHeight++;
                     this.updateDisplay();
                     this.animateHeightChange();
+                    this.hideTilePreview(); // Hide preview when height changes
                     this.showNotification(`Height increased to level ${this.currentHeight}`);
                 } else {
                     this.showNotification('Maximum height level reached (10)');
@@ -502,6 +565,7 @@
                     this.currentHeight--;
                     this.updateDisplay();
                     this.animateHeightChange();
+                    this.hideTilePreview(); // Hide preview when height changes
                     this.showNotification(`Height decreased to level ${this.currentHeight}`);
                 } else {
                     this.showNotification('Minimum height level reached (0)');
