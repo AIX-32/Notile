@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notile - Notes & Productivity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>  @import "./style.css"; </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Notes Panel -->
+        <div class="notes-panel">
+            <div class="notes-header">
+                <div class="app-title">Notile</div>
+                <div class="app-subtitle">Work, Have fun.</div>
+            </div>
+            
+            <div class="timer-section">
+                <div class="timer-display" id="timerDisplay">10:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn start" id="startBtn" onclick="startTimer()">Start Working</button>
+                    <button class="timer-btn pause" id="pauseBtn" onclick="pauseTimer()" style="display: none;">Pause</button>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="sessionsCompleted">0</div>
+                        <div class="stat-label">Sessions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="tilesEarned">0</div>
+                        <div class="stat-label">Tiles Earned</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="tilesUsed">0</div>
+                        <div class="stat-label">Tiles Used</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="notes-content">
+                <div class="notes-list" id="notesList">
+                    <!-- Notes will be added here -->
+                </div>
+                <textarea class="note-input" id="noteInput" placeholder="Write your thoughts, goals, or tasks..."></textarea>
+                <button class="add-note-btn" onclick="addNote()">Add Note</button>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div class="game-area">
+            <div class="game-header">
+                <div class="tiles-info">
+                    <div class="tiles-remaining" id="tilesRemaining">0</div>
+                    <div class="tiles-label">Tiles Available</div>
+                </div>
+            </div>
+            
+            <div class="grid-container">
+                <div class="grid" id="grid">
+                    <!-- Grid tiles will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tile Palette -->
+        <div class="tile-palette-container">
+            <div class="tile-option" data-tile="grass_center" style="background-image: url('tiles/grass_center_E.png')"></div>
+            <div class="tile-option" data-tile="building_center" style="background-image: url('tiles/building_center_E.png')"></div>
+            <div class="tile-option" data-tile="tree" style="background-image: url('tiles/tree_E.png')"></div>
+            <div class="tile-option" data-tile="water_center" style="background-image: url('tiles/water_center_E.png')"></div>
+            <div class="tile-option" data-tile="walls_corner" style="background-image: url('tiles/walls_corner_E.png')"></div>
+            <div class="tile-option remove-tile" data-tile="remove" title="Remove Tile"><i class="fas fa-trash remove-icon"></i></div>
+            <div class="tile-option tile-selector-btn" title="Choose Tiles"><i class="fas fa-plus selector-icon"></i></div>
+        </div>
+        
+        <!-- Height Controls Card -->
+        <div class="height-controls-card">
+            <div class="height-display-bottom">
+                <div class="height-number-bottom" id="currentHeightDisplayBottom">0</div>
+                <div class="height-label-bottom">Height</div>
+            </div>
+            <div class="height-buttons-bottom">
+                <button class="height-btn-styled increase-btn" onclick="app.increaseHeight()" title="Increase Height (Q)">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+                <button class="height-btn-styled clear-btn" onclick="app.clearCurrentHeight()" title="Clear Current Height (C)">
+                    <i class="fas fa-broom"></i>
+                </button>
+                <button class="height-btn-styled decrease-btn" onclick="app.decreaseHeight()" title="Decrease Height (A)">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="height-shortcuts-bottom">Q / A / C</div>
+        </div>
+    </div>
+
+    <!-- Mobile Height Controls -->
+    <div class="mobile-height-controls">
+        <button class="mobile-height-btn" onclick="app.increaseHeight()" title="Increase Height (Q)"><i class="fas fa-plus"></i></button>
+        <div class="mobile-height-display" id="mobileHeightDisplay">0</div>
+        <button class="mobile-height-btn" onclick="app.decreaseHeight()" title="Decrease Height (A)"><i class="fas fa-minus"></i></button>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Tile Selector Modal -->
+    <div class="tile-selector-modal" id="tileSelectorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2>Choose Tiles for Hotbar</h2>
+                    <div class="tile-count" id="tileCount">Loading tiles...</div>
+                </div>
+                <button class="close-modal" id="closeModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-search">
+                <input type="text" id="tileSearchInput" class="tile-search-input" placeholder="Search tiles..." />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="modal-body">
+                <div class="available-tiles" id="availableTiles">
+                    <!-- Available tiles will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="hotbar-preview" id="hotbarPreview">
+                    <!-- Current hotbar preview -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
