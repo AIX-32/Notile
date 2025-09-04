@@ -499,8 +499,8 @@
                 clearInterval(this.timerInterval);
                 
                 this.sessionsCompleted++;
-                this.tilesEarned++;
-                this.tilesAvailable++;
+                this.tilesEarned += 5;
+                this.tilesAvailable += 5;
                 this.timeRemaining = this.workTime;
                 
                 document.getElementById('startBtn').style.display = 'inline-block';
@@ -520,7 +520,7 @@
                     document.querySelector('.timer-display').classList.remove('celebrate');
                 }, 500);
                 
-                this.showNotification('🎉 Session complete! You earned 1 tile!');
+                this.showNotification('🎉 Session complete! You earned 5 tiles!');
             }
             
             updateTimerDisplay() {
@@ -692,7 +692,7 @@
                         if (remaining <= 0) {
                             // Session completed while away
                             this.completeSession();
-                            this.showNotification('🎉 Session completed while you were away! You earned 1 tile!');
+                            this.showNotification('🎉 Session completed while you were away! You earned 5 tiles!');
                         } else {
                             // Resume timer
                             this.startTime = state.startTime;
